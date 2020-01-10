@@ -33,8 +33,8 @@ class MindstormsGadget(AlexaGadget):
 
         STUD_MM = 8
 
-        self.leds = Leds()
-        self.sound = Sound()
+        # self.leds = Leds()
+        # self.sound = Sound()
         self.bot = LegoBot(OUTPUT_B, OUTPUT_C, OUTPUT_D, EV3Tire, 15 * STUD_MM)
 
     # def on_connected(self, device_addr):
@@ -88,30 +88,20 @@ if __name__ == '__main__':
 
     # Set LCD font and turn off blinking LEDs
     os.system('setfont Lat7-Terminus12x6')
-    gadget.leds.set_color("LEFT", "BLACK")
-    gadget.leds.set_color("RIGHT", "BLACK")
-
-    # Startup sequence
-    gadget.sound.play_song((('C4', 'e'), ('D4', 'e'), ('E5', 'q')))
-    gadget.leds.set_color("LEFT", "GREEN")
-    gadget.leds.set_color("RIGHT", "GREEN")
+    
 
     # Gadget main entry point
     # gadget.main()
     gadget.bot.odometry_start(0,0,0)
-    tc = 1    
-    for step in range(10):  
-        gadget.bot.rotate_and_update_sensors()   
-    # for step in range(200): 
-    #     #1. move robot
-    #     gadget.bot.move(tc)
-        
-    #     #2. supervisor calculates new velocities and we apply it to robot
-    #     new_inputs = supervisor.execute(gadget.bot.get_info(), tc)
-    #     gadget.bot.set_inputs(new_inputs)
+    tc = 1        
+    for step in range(10):#200 
+        #1. move robot
+        gadget.bot.move(tc)        
+        #2. supervisor calculates new velocities and we apply it to robot
+        new_inputs = supervisor.execute(gadget.bot.get_info(), tc)
+        gadget.bot.set_inputs(new_inputs)
     gadget.bot.stop()
     gadget.bot.odometry_stop()
-    # Shutdown sequence
-    gadget.sound.play_song((('E5', 'e'), ('C4', 'e')))
-    gadget.leds.set_color("LEFT", "BLACK")
-    gadget.leds.set_color("RIGHT", "BLACK")
+    # # Shutdown sequence
+    gadget.bot.turn_off()
+    

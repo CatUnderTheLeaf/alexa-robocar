@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-# (c) PySimiam Team 2014
-#
-# Contact person: Tim Fuchs <typograph@elec.ru>
-#
-# This class was implemented as a weekly programming excercise
-# of the 'Control of Mobile Robots' course by Magnus Egerstedt.
-#
 import sys
 import _thread
 import numpy as np
@@ -14,6 +7,8 @@ from scripts.pose import Pose
 from ev3dev2.sensor.lego import InfraredSensor
 from ev3dev2.motor import OUTPUT_B, OUTPUT_C, OUTPUT_D, MoveDifferential, SpeedRPM, SpeedPercent, SpeedNativeUnits, SpeedRPS, SpeedDPS, SpeedDPM, LargeMotor, MediumMotor
 from ev3dev2.wheel import EV3Tire
+from ev3dev2.sound import Sound
+from ev3dev2.led import Leds
 from math import ceil, exp, sin, cos, tan, pi
 from scripts.helpers import Struct
 
@@ -46,11 +41,23 @@ class LegoBot(MoveDifferential):
             desc=None, motor_class=LargeMotor):
         MoveDifferential.__init__(self, left_motor_port, right_motor_port, wheel_class, wheel_distance_mm)
         
+        self.leds = Leds()
+        self.sound = Sound()
+        self.leds.set_color("LEFT", "BLACK")
+        self.leds.set_color("RIGHT", "BLACK")
+
+        # Startup sequence
+        self.sound.play_song((('C4', 'e'), ('D4', 'e'), ('E5', 'q')))
+        self.leds.set_color("LEFT", "GREEN")
+        self.leds.set_color("RIGHT", "GREEN")
+
         # self.rot_motor = LargeMotor(rot_motor_port)
         self.rot_motor = MediumMotor(rot_motor_port)
         # create IR sensors
         self.ir_sensor = InfraredSensor()
         self.ir_sensors = []
+        self.sensor_rotation_point = Pose( 0.05, 0.0, np.radians(0))
+        self.sensor_rotation_radius = 0.04
         self.sensor_thread_run = False
         self.sensor_thread_id = None      
         ir_sensor_poses = [
@@ -88,6 +95,15 @@ class LegoBot(MoveDifferential):
         # self.info.ir_sensors.rmax = 0.3
         # self.info.ir_sensors.rmin = 0.04
 
+
+    def turn_off(self):
+        self.rot_motor.on_for_degrees(100, 90)
+         # Shutdown sequence
+        self.sound.play_song((('E5', 'e'), ('C4', 'e')))
+        self.leds.set_color("LEFT", "BLACK")
+        self.leds.set_color("RIGHT", "BLACK")
+
+
     def get_pose(self):
         """Get the pose of the object in world coordinates"""
         return Pose(self.x_pos_mm/1000, self.y_pos_mm/1000, self.theta)
@@ -101,6 +117,7 @@ class LegoBot(MoveDifferential):
         
     def get_info(self):
         # self.update_sensors()
+        self.rotate_and_update_sensors()
         # self.info.ir_sensors.readings = [sensor.reading() for sensor in self.ir_sensors]
         self.info.pose = self.get_pose()
         return self.info
@@ -136,8 +153,16 @@ class LegoBot(MoveDifferential):
 
             while self.sensor_thread_run:
 
-                #TODO
-                self.ir_sensors.append((motor.position, sensor.proximity))
+                angle = np.radians(motor.degrees) #convert from degrees to radians
+                #in rotate_and_update_sensors() i change polarity of the motor,
+                # so in odd rotations it has opposite angles
+                if self.rot_motor.polarity == self.rot_motor.POLARITY_NORMAL: 
+                    angle = -angle
+                sensor_x = round(self.sensor_rotation_radius*cos(angle) + self.sensor_rotation_point.x, 3)
+                sensor_y = round(self.sensor_rotation_radius*sin(angle) + self.sensor_rotation_point.y, 3)
+                point = Pose(sensor_x, sensor_y, angle)
+                # self.ir_sensors.append((Pose(sensor_x, sensor_y, angle), round(sensor.proximity*0.007, 3)))
+                self.ir_sensors.append((point.x, point.y, point.theta, round(sensor.proximity*0.007, 3))) # multiply by 0.007 as IR Sensor max range is 70cm
 
                 # if sleep_time:
                 #     time.sleep(sleep_time)
@@ -163,21 +188,17 @@ class LegoBot(MoveDifferential):
             
     def rotate_and_update_sensors(self):
         
-        self.sensor_update_start(self.rot_motor, self.ir_sensor)    
-        # print("position of motor: {}".format(self.rot_motor.position), file=sys.stderr)
-        # self.rot_motor.on_to_position(100, 90, True, True)
-        self.rot_motor.on_for_degrees(100, 90, True, True)
-        # while self.rot_motor.is_running:
-        #     print("position of motor: {}".format(self.rot_motor.position), file=sys.stderr)
-        #     print("sensor data: {}".format(self.ir_sensor.proximity), file=sys.stderr)
-        # print("position of motor: {}".format(self.rot_motor.position), file=sys.stderr)
-        # self.rot_motor.on_to_position(100, -90, True, True)
-        self.rot_motor.on_for_degrees(100, -90, True, True)
-        # while self.rot_motor.is_running:
-        #     print("sensor data: {}".format(self.ir_sensor.proximity), file=sys.stderr)
-        
-        # print("position of motor: {}".format(self.rot_motor.position), file=sys.stderr)
-        # self.rot_motor.on_to_position(100, 0)
+        #start measuring distance with IR Sensor in another thread while rotating
+        self.sensor_update_start(self.rot_motor, self.ir_sensor)
+
+        #rotate 
+        self.rot_motor.on_for_degrees(100, 180, True, True)
+        #change polarity of the motor, so it can rotate in opposite direction next time
+        if self.rot_motor.polarity == self.rot_motor.POLARITY_NORMAL:
+            self.rot_motor.polarity = self.rot_motor.POLARITY_INVERSED
+        else:
+            self.rot_motor.polarity = self.rot_motor.POLARITY_NORMAL
+       
 
     #     for sensor in self.ir_sensors:
     #         sensor.update_distance()
