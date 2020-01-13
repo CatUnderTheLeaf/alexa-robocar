@@ -36,19 +36,20 @@ class LegoBotSupervisor(Supervisor):
 
         # Create & set the controller
         # self.current = self.create_controller('GoToAngle', self.parameters)
-        self.gtg = self.create_controller('GoToGoal', self.parameters)
+        # self.gtg = self.create_controller('GoToGoal', self.parameters)
+        self.ao = self.create_controller('AvoidObstacles', self.parameters)
 
         # Set the controller
-        self.current = self.gtg
+        self.current = self.ao
 
                     
     def init_default_parameters(self):
         """Sets the default PID parameters, goal, and velocity"""
         
         p = Struct()
-        p.goal = Struct()
-        p.goal.x = 0.5 #m
-        p.goal.y = 0.5 #m
+        # p.goal = Struct()
+        # p.goal.x = 0.5 #m
+        # p.goal.y = 0.5 #m
         p.velocity = 0.2 #m/sec
         p.gains = Struct()
         p.gains.kp = 4.0
@@ -59,9 +60,9 @@ class LegoBotSupervisor(Supervisor):
         
     def set_parameters(self,params):
         """Set parameters for itself and the controllers"""
-        self.parameters.goal = params.goal
+        # self.parameters.goal = params.goal
         self.parameters.velocity = params.velocity
-        self.parameters.pgain = params.pgain
+        # self.parameters.pgain = params.pgain # for goToAngle controller
         self.current.set_parameters(self.parameters)
         
                                   
@@ -83,37 +84,26 @@ class LegoBotSupervisor(Supervisor):
         x_r, y_r, theta = self.robot.pose
         
         return self.robot.pose
-         
-    
-    # def get_ir_distances(self):
-    #     """Converts the IR distance readings into a distance in meters"""
-        
-    #     #Insert Week 2 Assignment Code Here
-    #     ir_coeff = numpy.array([1.16931064e+07, -1.49425626e+07,
-    #                             7.96904053e+06, -2.28884314e+06,
-    #                             3.80068213e+05, -3.64435691e+04,
-    #                             1.89558821e+03])
-    #     # ir_distances = [0]*len(self.robot.ir_sensors.readings) #populate this list
-    #     ir_distances = numpy.polyval(ir_coeff, self.robot.ir_sensors.readings)
-    #     #End Assignment week2
-
-    #     return ir_distances
 
     def execute(self, robot_info, dt):
         """Inherit default supervisor procedures and return unicycle model output (x, y, theta)"""
-        
-        if not self.at_goal():
-            output = Supervisor.execute(self, robot_info, dt)
-            return self.ensure_w(self.uni2diff(output))
-        else:
-            return 0,0
+        # for gotogoal
+        # if not self.at_goal():
+        #     output = Supervisor.execute(self, robot_info, dt)
+        #     return self.ensure_w(self.uni2diff(output))
+        # else:
+        #     return 0,0
+
+        # testing avoidObstacles
+        output = Supervisor.execute(self, robot_info, dt)
+        return self.ensure_w(self.uni2diff(output))
 
 
     def process_state_info(self, state):
         """Update state parameters for the controllers and self"""
 
         Supervisor.process_state_info(self,state)
-        
+        self.parameters.robot = self.robot
         self.parameters.pose = self.pose_est
                                        
 
@@ -131,8 +121,6 @@ class LegoBotSupervisor(Supervisor):
     def ensure_w(self,v_lr):
       
         # This code is taken directly from Sim.I.Am week 4
-        # I'm sure one can do better. 
-
         v_max = self.robot.wheels.max_velocity
         v_min = self.robot.wheels.min_velocity
        

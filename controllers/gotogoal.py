@@ -1,11 +1,4 @@
-#
-# (c) PySimiam Team 2013
-#
-# Contact person: Tim Fuchs <typograph@elec.ru>
-#
-# This class was implemented as a weekly programming excercise
-# of the 'Control of Mobile Robots' course by Magnus Egerstedt.
-#
+
 from controllers.pid_controller import PIDController
 import math
 import numpy
@@ -40,22 +33,22 @@ class GoToGoal(PIDController):
         v, w = PIDController.execute(self, state, dt)
         
         # The goal:
-        x_g, y_g = state.goal.x, state.goal.y
+#         x_g, y_g = state.goal.x, state.goal.y
         
-        # The robot:
-        x_r, y_r, theta = state.pose
-        print("current Robot pose: ({}, {}, {})".format(x_r, y_r, theta), file=sys.stderr)
+#         # The robot:
+#         x_r, y_r, theta = state.pose
+#         print("current Robot pose: ({}, {}, {})".format(x_r, y_r, theta), file=sys.stderr)
         
-        # distance between goal and robot in x - direction
-        u_x = x_g - x_r
+#         # distance between goal and robot in x - direction
+#         u_x = x_g - x_r
 
-        # distance between goal and robot in y - direction
-        u_y = y_g - y_r
-#TODO check this
-        # distance  between robot and goal
-        # dist = numpy.linalg.norm(numpy.array([u_x,u_y]))
-        # v = abs(w) + dist
-        v = state.velocity
+#         # distance between goal and robot in y - direction
+#         u_y = y_g - y_r
+# #TODO check this
+#         # distance  between robot and goal
+#         # dist = numpy.linalg.norm(numpy.array([u_x,u_y]))
+#         # v = abs(w) + dist
+#         v = state.velocity
         # 
         print("current v, w: ({}, {})".format(v, w), file=sys.stderr)
         

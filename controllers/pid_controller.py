@@ -1,11 +1,4 @@
-#
-# (c) PySimiam Team 2013
-#
-# Contact person: Tim Fuchs <typograph@elec.ru>
-#
-# This class was implemented as a weekly programming excercise
-# of the 'Control of Mobile Robots' course by Magnus Egerstedt.
-#
+
 from scripts.controller import Controller
 import math
 import numpy

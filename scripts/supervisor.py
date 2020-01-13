@@ -101,43 +101,6 @@ class Supervisor:
         Must be implemented in subclasses.
         """
         raise NotImplementedError("Supervisor.init_default_parameters")
-
-    def get_ui_description(self, params = None):
-        """Return a list describing the parameters available to the user.
-
-        :param params: An instance of the paramaters structure as returned
-                       from get_parameters. If not specified, this method
-                       should use :attr:`~Supervisor.parameters`
-        :type params:  :class:`~helpers.Struct`
-        
-        :return: A list describing the interface
-        
-        The structure returned by this function is used in the interface
-        to show a window where the user can adjust the supervisor parameters.
-        When the user confirms the changed parameters, this structure is used
-        to create the structure that will be passed to :meth:`set_parameters`.
-        
-        The format of the returned object is as follows:
-        
-        - The object is a list of tuples. The order of tuples defines the order
-          of fields.
-        - The first part of a tuple (key) is either a string or a tuple.
-          If it is a tuple, then the first value is the name of the parameter field,
-          the second value is an UI label, and the third is an optional string
-          identifier if the parameter structure has several fields, identical in
-          structure. If the key is a string, it is used both as a label, capitalized,
-          and as a field name.
-        - The second part of a tuple (value) describes the contents of a UI element.
-          It can be either a primitive type, such as an int, a bool or a float,
-          in which case it describes one parameter, or a (string, list of strings) tuple,
-          for multiple-choice parameters, or an object of type :class:`~ui.Parameter`,
-          that allows one to describe the interface more precisely. This value can also
-          be a list, structured the same way the root list is structured, in which case
-          this element contains a subwindow.
-        
-        Must be implemented in subclasses.
-        """
-        raise NotImplementedError("Supervisor.get_ui_description")
         
     def set_parameters(self,params):
         """Update this supervisor parameters. The `params` will have the same

@@ -33,8 +33,6 @@ class MindstormsGadget(AlexaGadget):
 
         STUD_MM = 8
 
-        # self.leds = Leds()
-        # self.sound = Sound()
         self.bot = LegoBot(OUTPUT_B, OUTPUT_C, OUTPUT_D, EV3Tire, 15 * STUD_MM)
 
     # def on_connected(self, device_addr):
@@ -94,13 +92,13 @@ if __name__ == '__main__':
     # gadget.main()
     gadget.bot.odometry_start(0,0,0)
     tc = 1        
-    for step in range(10):#200 
+    for step in range(20):#200 
         #1. move robot
         gadget.bot.move(tc)        
         #2. supervisor calculates new velocities and we apply it to robot
         new_inputs = supervisor.execute(gadget.bot.get_info(), tc)
         gadget.bot.set_inputs(new_inputs)
-    gadget.bot.stop()
+    # gadget.bot.stop()
     gadget.bot.odometry_stop()
     # # Shutdown sequence
     gadget.bot.turn_off()
