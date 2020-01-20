@@ -1,10 +1,10 @@
-
 from scripts.controller import Controller
 import math
 import numpy
 
 class PIDController(Controller):
-    """The PID controller is a general-purpose controller that steers the robot to a certain heading direction. The heading is recalculated on every execution."""
+    """The PID controller is a general-purpose controller that steers the robot to a certain heading direction. 
+    The heading is recalculated on every execution."""
     def __init__(self, params):
         '''Initialize internal variables'''
         Controller.__init__(self,params)

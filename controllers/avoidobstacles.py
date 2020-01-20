@@ -5,7 +5,7 @@ from scripts.pose import Pose
 import sys
 
 class AvoidObstacles(PIDController):
-    """Avoid obstacles is an example controller that checks the sensors
+    """Avoid obstacles is a controller that checks the sensors
        for any readings, constructs 'obstacle' vectors and directs the robot
        in the direction of their weighted sum."""
     def __init__(self, params):
@@ -13,10 +13,8 @@ class AvoidObstacles(PIDController):
         PIDController.__init__(self,params)
 
     def set_parameters(self, params):
-        """Set PID values and sensor poses.
-        
-        The params structure is expected to have sensor poses in the robot's
-        reference frame as ``params.sensor_poses``.
+        """
+        Set parameters.
         """
         PIDController.set_parameters(self,params)
 
@@ -38,7 +36,7 @@ class AvoidObstacles(PIDController):
     def execute(self, state, dt):
         
         v, w = PIDController.execute(self, state, dt)
-        
+        # TODO check this regulation of velocity
         # dmin = min(state.sensor_distances)
         # v *= ((dmin - 0.04)/0.26)**2
         

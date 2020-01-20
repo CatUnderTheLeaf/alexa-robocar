@@ -4,7 +4,7 @@ import _thread
 import numpy as np
 from scripts.pose import Pose
 from ev3dev2.sensor.lego import InfraredSensor
-from ev3dev2.motor import OUTPUT_B, OUTPUT_C, OUTPUT_D, MoveDifferential, SpeedRPM, SpeedPercent, SpeedNativeUnits, SpeedRPS, SpeedDPS, SpeedDPM, LargeMotor, MediumMotor
+from ev3dev2.motor import OUTPUT_B, OUTPUT_C, OUTPUT_D, MoveDifferential, SpeedRPS, LargeMotor, MediumMotor
 from ev3dev2.wheel import EV3Tire
 from ev3dev2.sound import Sound
 from ev3dev2.led import Leds
@@ -17,7 +17,10 @@ class LegoBot(MoveDifferential):
             wheel_class, wheel_distance_mm,
             desc=None, motor_class=LargeMotor):
         MoveDifferential.__init__(self, left_motor_port, right_motor_port, wheel_class, wheel_distance_mm)
-        
+        """ 
+        LegoBot Class inherits all usefull stuff for differential drive
+        and adds sound, LEDs, IRSensor which is rotated by Medium Motor
+         """
         self.leds = Leds()
         self.sound = Sound()
         self.leds.set_color("LEFT", "BLACK")
@@ -30,7 +33,6 @@ class LegoBot(MoveDifferential):
 
         # create IR sensors
         self.ir_sensor = InfraredSensor()
-        # self.ir_sensors = None
         self.sensor_rotation_point = Pose( 0.05, 0.0, np.radians(0))
         self.sensor_rotation_radius = 0.04
         self.sensor_thread_run = False
@@ -79,14 +81,14 @@ class LegoBot(MoveDifferential):
         self.on_for_seconds(SpeedRPS(vl/2/pi), SpeedRPS(vr/2/pi), dt, False, False)
         
     def get_info(self):
-        # self.update_sensors()
+        # getting updated info for supervisor
         self.rotate_and_update_sensors()
-        # self.info.ir_sensors.readings = self.ir_sensors
         # print("position of sensor: {}".format(self.info.ir_sensors.readings), file=sys.stderr)
         self.info.pose = self.get_pose()
         return self.info
     
     def set_inputs(self,inputs):
+        """ Setting new values of (vl, vr) sent by supervisor and controller """
         self.set_wheel_speeds(inputs)
         
     def get_wheel_speeds(self):
@@ -117,14 +119,13 @@ class LegoBot(MoveDifferential):
             while self.sensor_thread_run:
 
                 angle = np.radians(motor.degrees) # convert from degrees to radians
-                # in rotate_and_update_sensors() i change polarity of the motor,
+                # in rotate_and_update_sensors() I change polarity of the motor,
                 # so in odd rotations it has opposite angles
                 if self.rot_motor.polarity == self.rot_motor.POLARITY_NORMAL: 
                     angle = -angle
                 sensor_x = round(self.sensor_rotation_radius*cos(angle) + self.sensor_rotation_point.x, 3)
                 sensor_y = round(self.sensor_rotation_radius*sin(angle) + self.sensor_rotation_point.y, 3)
                 point = Pose(sensor_x, sensor_y, angle)
-                # self.ir_sensors.append((point, round(sensor.proximity*0.007, 3)))
                 self.info.ir_sensors.poses.append(point)
                 self.info.ir_sensors.readings.append(round(sensor.proximity*0.007, 3))
                 # self.ir_sensors.append((point.x, point.y, point.theta, round(sensor.proximity*0.007, 3))) # multiply by 0.007 as IR Sensor max range is 70cm

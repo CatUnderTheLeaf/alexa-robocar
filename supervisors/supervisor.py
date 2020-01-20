@@ -1,11 +1,3 @@
-#
-# (c) PySimiam Team 2014
-#
-# Contact person: John Witten <jon.witten@gmail.com>
-#
-# This class was implemented as a weekly programming excercise
-# of the 'Control of Mobile Robots' course by Magnus Egerstedt.
-#
 from scripts.supervisor import Supervisor
 from scripts.helpers import Struct
 from scripts.pose import Pose
@@ -14,21 +6,11 @@ import numpy
 import sys
 
 class LegoBotSupervisor(Supervisor):
-    """The LegoBotSupervisor inherits from the superclass 'supervisor.Supervisor'
-       to implement detailed calculations for any inheriting LegoBot supervisor.
-       Students are intended to inherit from this class when making their own supervisors.
-       
-
-       Most importantly, the LegoBotSupervisor object implements the system functions
+    """
+       The LegoBotSupervisor object implements the system functions
        necessary to operate a LegoBot, namely the uni2diff unicycle to differential
        motion model conversion, the Jacobian problem, and any other computationally complex interface.
-
-       """
-
-    # ir_coeff = numpy.array([ 8.56495710e-18,  -3.02930608e-14,
-    #                       4.43025017e-11,  -3.49052288e-08,
-    #                       1.61452174e-05,  -4.44025236e-03,
-    #                       6.74137385e-1])
+    """
        
     def __init__(self, robot_pose, robot_info):
         """Initialize internal variables"""
@@ -47,6 +29,7 @@ class LegoBotSupervisor(Supervisor):
         """Sets the default PID parameters, goal, and velocity"""
         
         p = Struct()
+        # for Avoid Obstacle testing no need for goal
         # p.goal = Struct()
         # p.goal.x = 0.5 #m
         # p.goal.y = 0.5 #m
@@ -119,8 +102,21 @@ class LegoBotSupervisor(Supervisor):
         return distance_to_goal < 0.02
 
     def ensure_w(self,v_lr):
-      
-        # This code is taken directly from Sim.I.Am week 4
+
+      """ 
+      The robot’s motors have a maximum angular velocity, and the motors stall at low speeds. 
+      Suppose that we pick a linear velocity v that requires the motors to spin at 90% power. 
+      Then, we want to change ω from 0 to some value that requires 20% more power from the right motor, 
+      and 20% less power from the left motor. This is not an issue for the left motor, 
+      but the right motor cannot turn at a capacity greater than 100%. 
+      The results is that the robot cannot turn with the ω specified by our controller.
+
+      Since PID controllers focus more on steering than on controlling the linear velocity, 
+      we want to prioritize ω over v in situations, where we cannot satisfy ω with the motors. 
+      In fact, we will simply reduce v until we have sufficient headroom to achieve ω with the robot. 
+      The function is designed to ensure that ω is achieved even if the original combination of v and ω exceeds the maximum vl and vr.
+       """
+        # This code is taken directly from Sim.I.Am project
         v_max = self.robot.wheels.max_velocity
         v_min = self.robot.wheels.min_velocity
        

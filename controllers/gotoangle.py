@@ -1,10 +1,9 @@
-
 from scripts.controller import Controller
 import math
 import sys
 
 class GoToAngle(Controller):
-    """Go-to-goal steers the robot to a predefined position in the world."""
+    """Go-to-angle steers the robot to a predefined angle in the world."""
     def __init__(self, params):
         """Initialize internal variables"""
         Controller.__init__(self,params)

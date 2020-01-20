@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+#Description: This is the Base Supervisor class for PySimiam project.
 from . import helpers
 
 class Supervisor:
@@ -14,7 +16,6 @@ class Supervisor:
                            :meth:`~robot.Robot.get_info`
         :type robot_info: :class:`~helpers.Struct`
         
-        Any extension of pysimiam will require inheriting from this superclass.
         The important methods that have to be implemented to control a robot are
         :meth:`~Supervisor.estimate_pose`, :meth:`~Supervisor.process`,
         :meth:`~Supervisor.init_default_parameters` and :meth:`~Supervisor.get_ui_description`.

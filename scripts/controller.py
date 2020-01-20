@@ -1,7 +1,6 @@
-#PySimiam
 #Author: John Alexander
 #ChangeDate: 8 FEB 2013; 2300EST
-#Description: This is the Controller class for PySimiam.
+#Description: This is the Base Controller class for PySimiam project.
 import math
 
 class Controller():

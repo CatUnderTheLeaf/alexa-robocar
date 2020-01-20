@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+#Description: A file with helper functions for PySimiam project.
 import sys
 import json
 

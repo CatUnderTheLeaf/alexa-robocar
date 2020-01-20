@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+#Description: This is the Pose class for PySimiam project.
 import numpy as np
 from math import sin,cos,pi
 
