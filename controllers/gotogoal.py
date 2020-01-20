@@ -11,7 +11,7 @@ class GoToGoal(PIDController):
 
     # Let's overwrite this way:
     def get_heading_angle(self, state):
-        """Get the direction from the robot to the goal as a vector."""
+        """Get the direction from the robot to the goal as an angle."""
         
         # The goal:
         x_g, y_g = state.goal.x, state.goal.y
