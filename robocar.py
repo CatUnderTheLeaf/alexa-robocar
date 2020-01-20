@@ -32,8 +32,9 @@ class MindstormsGadget(AlexaGadget):
         super().__init__()
 
         STUD_MM = 8
+        DIST_BTW_WHEELS = 15 * STUD_MM
 
-        self.bot = LegoBot(OUTPUT_B, OUTPUT_C, OUTPUT_D, EV3Tire, 15 * STUD_MM)
+        self.bot = LegoBot(OUTPUT_B, OUTPUT_C, OUTPUT_D, EV3Tire, DIST_BTW_WHEELS)
 
     # def on_connected(self, device_addr):
     #     """
