@@ -86,21 +86,19 @@ if __name__ == '__main__':
     supervisor = LegoBotSupervisor(gadget.bot.get_pose(), gadget.bot.get_info())
 
     # Set LCD font and turn off blinking LEDs
-    os.system('setfont Lat7-Terminus12x6')
-    
+    os.system('setfont Lat7-Terminus12x6')   
 
     # Gadget main entry point
     # gadget.main()
-    gadget.bot.odometry_start(0,0,0)
+    
     tc = 1        
-    for step in range(20):#200 
+    for step in range(200):#200 
         #1. move robot
         gadget.bot.move(tc)        
         #2. supervisor calculates new velocities and we apply it to robot
         new_inputs = supervisor.execute(gadget.bot.get_info(), tc)
         gadget.bot.set_inputs(new_inputs)
-    # gadget.bot.stop()
-    gadget.bot.odometry_stop()
-    # # Shutdown sequence
+    
+    # Shutdown sequence
     gadget.bot.turn_off()
     

@@ -20,16 +20,18 @@ class AvoidObstacles(PIDController):
 
     def get_heading(self, state):
         """Get the direction away from the obstacles as a vector."""
-        print("current Robot state: ({})".format(state), file=sys.stderr)
+        # print("current Robot IR readings: ({})".format(state.robot.ir_sensors.readings), file=sys.stderr)
+        # for pose in state.robot.ir_sensors.poses:
+        #     print("IR poses: ({})".format(pose), file=sys.stderr)
         # Calculate heading:
         ws = sum(state.robot.ir_sensors.readings)
         self.weights = [w / ws for w in state.robot.ir_sensors.readings]
         x, y = 0, 0
         for d,p,w in zip(state.robot.ir_sensors.readings, state.robot.ir_sensors.poses, self.weights):
-            pose = Pose(d) >> p
+            pose = Pose(d) >> Pose(p)
             x += pose.x*w
             y += pose.y*w                
-        print("current Robot heading: ({}, {})".format(x, y), file=sys.stderr)
+        # print("current Robot heading: ({}, {})".format(x, y), file=sys.stderr)
         
         return numpy.array([x, y, 1])
     

@@ -101,21 +101,20 @@ class LegoBotSupervisor(Supervisor):
         
         return distance_to_goal < 0.02
 
-    def ensure_w(self,v_lr):
+    def ensure_w(self,v_lr):        
+        """ 
+            The robot’s motors have a maximum angular velocity, and the motors stall at low speeds. 
+            Suppose that we pick a linear velocity v that requires the motors to spin at 90% power. 
+            Then, we want to change ω from 0 to some value that requires 20% more power from the right motor, 
+            and 20% less power from the left motor. This is not an issue for the left motor, 
+            but the right motor cannot turn at a capacity greater than 100%. 
+            The results is that the robot cannot turn with the ω specified by our controller.
 
-      """ 
-      The robot’s motors have a maximum angular velocity, and the motors stall at low speeds. 
-      Suppose that we pick a linear velocity v that requires the motors to spin at 90% power. 
-      Then, we want to change ω from 0 to some value that requires 20% more power from the right motor, 
-      and 20% less power from the left motor. This is not an issue for the left motor, 
-      but the right motor cannot turn at a capacity greater than 100%. 
-      The results is that the robot cannot turn with the ω specified by our controller.
-
-      Since PID controllers focus more on steering than on controlling the linear velocity, 
-      we want to prioritize ω over v in situations, where we cannot satisfy ω with the motors. 
-      In fact, we will simply reduce v until we have sufficient headroom to achieve ω with the robot. 
-      The function is designed to ensure that ω is achieved even if the original combination of v and ω exceeds the maximum vl and vr.
-       """
+            Since PID controllers focus more on steering than on controlling the linear velocity, 
+            we want to prioritize ω over v in situations, where we cannot satisfy ω with the motors. 
+            In fact, we will simply reduce v until we have sufficient headroom to achieve ω with the robot. 
+            The function is designed to ensure that ω is achieved even if the original combination of v and ω exceeds the maximum vl and vr.
+        """     
         # This code is taken directly from Sim.I.Am project
         v_max = self.robot.wheels.max_velocity
         v_min = self.robot.wheels.min_velocity
