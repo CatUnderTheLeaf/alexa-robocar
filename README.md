@@ -1,5 +1,5 @@
 # alexa-robocar
->Initially I wanted to make a LEGO Mindstorms EV3 robocar which can be controlled with Amazon Alexa voice commands, Alexa related stuff is still not implemented.
+>Initially I wanted to make a LEGO Mindstorms EV3 robocar which can be controlled with Amazon Alexa voice commands, now it reacts on Alexa 'wake word'.
 
 In this project I'm planning to implement in LEGO robocar all things I've learned:
   1. From [“Control of Mobile Robots”](https://www.coursera.org/learn/mobile-robot) using [PySimiam](http://pysimiam.sourceforge.net/coursera.html). See my [repository](https://github.com/CatUnderTheLeaf/pySimIAm)
@@ -11,16 +11,17 @@ In this project I'm planning to implement in LEGO robocar all things I've learne
        - [x] [AvoidObstacles Controller](https://github.com/CatUnderTheLeaf/alexa-robocar/wiki/AvoidObstacles-Controller)
        - [ ] [Blended (GoToGoal + AvoidObstacles) Controller](https://github.com/CatUnderTheLeaf/alexa-robocar/wiki/Blending-Controller-(GTG-and-AO))
        - [ ] [FollowWall Controller](https://github.com/CatUnderTheLeaf/alexa-robocar/wiki/FollowWall-Controller) cw and ccw
-  2. From ["Artificial Intelligence for Robotics"](https://classroom.udacity.com/courses/cs373). See my [repository](https://github.com/CatUnderTheLeaf/udacity_Runaway-Robot)
-     - [ ] Localization
-     - [ ] Kalman or Particle Filters
+
+>Other features wait till I equip my robot with enough number of sensors and camera
+  
+  2. From Udacity Nanodegrees ["Self-Driving Car Nanodegree"](https://learn.udacity.com/nanodegrees/nd013) and ["Robotics Software Engineer"](https://learn.udacity.com/nanodegrees/nd209).
      - [ ] Path planning
      - [ ] SLAM
-  3. Other stuff
-     - Alexa skills and commands
      - Machine Learning and Computer Vision
        - [ ] Lane Finding
        - [ ] Traffic Sign Classification
+  3. Other stuff
+     - Alexa skills and commands
      - ROS
 
 ## Wiki links
